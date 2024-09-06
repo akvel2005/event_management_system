@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            background-color: #333;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
+        h2 {
+            color: #333;
+            padding: 10px 20px;
+        }
+        .dashboard {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .dashboard p {
+            font-size: 18px;
+            margin: 0;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        form {
+            display: inline;
+        }
+        button {
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        a {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #007bff;
+            text-decoration: none;
+            font-size: 16px;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome {{ request.user.username }}</h1>
+    
+    <div class="dashboard">
+        {% if profile.role == 'admin' %}
+            <p>Admin Dashboard</p>
+            <!-- Admin-specific content -->
+        {% elif profile.role == 'organizer' %}
+            <p>Organizer Dashboard</p>
+            <!-- Organizer-specific content -->
+        {% elif profile.role == 'attendee' %}
+            <p>Attendee Dashboard</p>
+            <!-- Attendee-specific content -->
+        {% endif %}
+        
+        <h2>Events</h2>
+        <ul>
+            {% for event in events %}
+                <li>
+                    {{ event.title }} - {{ event.date }}
+                    {% if profile.role == 'attendee' %}
+                        <form action="{% url 'register_event' event.id %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit">Register</button>
+                        </form>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+        
+        <a href="{% url 'logout' %}">Logout</a>
+    </div>
+</body>
+</html>
